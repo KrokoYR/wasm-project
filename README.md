@@ -1,6 +1,8 @@
-# FFMPEG project
+# Wasm project
 
-Just a simple project, which is let you to convert video files to gifs by using FFMPEG library.
+Project to test WASM functionality. For now:
+
+- Has FFMPEG library, which is let to convert video files to gifs.
 
 ## Available Scripts
 
