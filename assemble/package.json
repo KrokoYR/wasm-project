@@ -1,0 +1,20 @@
+{
+  "name": "assemble",
+  "version": "1.0.0",
+  "description": "support-wasm",
+  "main": "index.js",
+  "author": "KrokoYR",
+  "license": "MIT",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.17.2"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.17.2"
+  },
+  "scripts": {
+    "asbuild:untouched": "asc assembly/index.ts --target debug",
+    "asbuild:optimized": "asc assembly/index.ts --target release",
+    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
+    "test": "node tests"
+  }
+}
