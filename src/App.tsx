@@ -1,40 +1,100 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
+
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+const ffmpeg = createFFmpeg({ log: true });
 
 interface AppProps {}
 
+export type FileEventTarget = EventTarget & { files: FileList };
+
+const COMMANDS = {
+  inputFile: '-i',
+  timeFlag: '-t',
+  secondsFlag: '-ss',
+  encodeFlag: '-f',
+};
+
 function App({}: AppProps) {
-  // Create the count state.
-  const [count, setCount] = useState(0);
-  // Create the counter (+1 every second).
+  const [ready, setReady] = useState(false);
+  const [video, setVideo] = useState<File>();
+  const [gif, setGif] = useState('');
+
+  const load = async () => {
+    await ffmpeg.load();
+    setReady(true);
+  };
+
   useEffect(() => {
-    const timer = setTimeout(() => setCount(count + 1), 1000);
-    return () => clearTimeout(timer);
-  }, [count, setCount]);
-  // Return the App component.
-  return (
+    load();
+  }, []);
+
+  const handleLoadVideo = (files: FileList | null) => {
+    if (files) {
+      setVideo(files.item(0) || undefined);
+    }
+  };
+
+  const convertToGif = async () => {
+    if (video) {
+      const inputFileName = 'test.mp4';
+      const outputFileName = 'out.gif';
+
+      ffmpeg.FS('writeFile', inputFileName, await fetchFile(video));
+
+      // Run the FFMPEG command:
+      await ffmpeg.run(
+        COMMANDS.inputFile,
+        inputFileName,
+        COMMANDS.timeFlag,
+        '2.5',
+        COMMANDS.secondsFlag,
+        '2.0',
+        COMMANDS.encodeFlag,
+        'gif',
+        'out.gif',
+      );
+
+      // Read the result:
+      const data = ffmpeg.FS('readFile', outputFileName);
+
+      // Create URL:
+      const url = URL.createObjectURL(
+        new Blob([data.buffer], { type: 'image/gif' }),
+      );
+      setGif(url);
+    }
+  };
+
+  if (video) console.log(video);
+
+  return ready ? (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <p>
-          Page has been open for <code>{count}</code> seconds.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </p>
-      </header>
+      {video && (
+        <video controls width={250} src={URL.createObjectURL(video)}></video>
+      )}
+
+      <div>
+        <input
+          type="file"
+          name="video"
+          id="gif-video"
+          onChange={(e) => handleLoadVideo(e.target.files)}
+        />
+      </div>
+
+      <h3>Result</h3>
+
+      <button onClick={convertToGif}>Convert</button>
+
+      {gif && (
+        <div>
+          <img src={gif} width={250} />
+        </div>
+      )}
     </div>
+  ) : (
+    <p>Loading...</p>
   );
 }
 

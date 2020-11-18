@@ -1,6 +1,6 @@
-# New Project
+# FFMPEG project
 
-> ✨ Bootstrapped with Create Snowpack App (CSA).
+Just a simple project, which is let you to convert video files to gifs by using FFMPEG library.
 
 ## Available Scripts
 
