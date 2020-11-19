@@ -5,10 +5,10 @@
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-    "wasm": "yarn --cwd './assemble/' asbuild",
-    "wasm:untouched": "asc assembly/index.ts --target debug",
-    "wasm:optimized": "asc assembly/index.ts --target release",
-    "test:wasm": "yarn --cwd './assemble/' test"
+    "wasm:build": "yarn --cwd './assembly/' asbuild",
+    "wasm:untouched": "yarn --cwd './assembly/' asbuild:untouched",
+    "wasm:optimized": "yarn --cwd './assembly/' asbuild:optimized",
+    "test:wasm": "yarn --cwd './assembly/' test"
   },
   "dependencies": {
     "@ffmpeg/core": "^0.8.4",
